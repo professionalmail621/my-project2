@@ -1,64 +1,118 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useMemo } from "react";
+import { getTasks } from "@/lib/tasks";
+import { Task } from "@/types/tasks";
+import TaskForm from "@/components/TaskForm";
+import TaskList from "@/components/TaskList";
 
 export default function Home() {
+  const [tasks, setTasks] = useState<Task[]>(getTasks());
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter tasks based on search query
+  const filteredTasks = useMemo(() => {
+    if (!searchQuery.trim()) return tasks;
+    return tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [tasks, searchQuery]);
+
+  // Calculate task statistics
+  const completedCount = tasks.filter((task) => task.status === "done").length;
+  const totalCount = tasks.length;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
+        fontFamily: "sans-serif",
+        padding: "20px",
+      }}
+    >
+      <main
+        style={{
+          maxWidth: "800px",
+          margin: "0 auto",
+          backgroundColor: "white",
+          borderRadius: "8px",
+          padding: "30px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "32px",
+            fontWeight: "bold",
+            marginBottom: "30px",
+            color: "#1565C0",
+            textAlign: "center",
+          }}
+        >
+          Task Tracker
+        </h1>
+
+        <TaskForm onTaskAdded={() => setTasks(getTasks())} />
+
+        {/* Task Counter */}
+        <div
+          style={{
+            backgroundColor: "#E3F2FD",
+            padding: "15px 20px",
+            borderRadius: "8px",
+            marginBottom: "20px",
+            textAlign: "center",
+            border: "1px solid #90CAF9",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "18px",
+              fontWeight: "600",
+              color: "#1565C0",
+            }}
+          >
+            {completedCount} of {totalCount} tasks completed
+          </span>
+        </div>
+
+        {/* Search/Filter Bar */}
+        <div style={{ marginBottom: "20px" }}>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search tasks by title..."
+            style={{
+              width: "100%",
+              padding: "12px 16px",
+              border: "2px solid #e0e0e0",
+              borderRadius: "8px",
+              fontSize: "16px",
+              boxSizing: "border-box",
+              transition: "border-color 0.2s",
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "#1565C0")}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
+          />
+          {searchQuery && (
+            <p
+              style={{
+                marginTop: "8px",
+                fontSize: "14px",
+                color: "#666",
+              }}
+            >
+              Showing {filteredTasks.length} of {totalCount} tasks
+            </p>
+          )}
+        </div>
+
+        <TaskList
+          tasks={filteredTasks}
+          onTasksChange={() => setTasks(getTasks())}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
       </main>
     </div>
   );
