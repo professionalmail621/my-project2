@@ -18,9 +18,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Kilo Code Review
-        uses: kilocode/kilo-review-action@v1
-        with:
-          api-key: ${{ secrets.KILO_API_KEY }}
-          model: "moonshotai/kimi-k2"
-          review-level: "detailed"
+      # Temporarily disabled - action not yet published
+      # - name: Kilo Code Review
+      #   uses: kilocode/kilo-review-action@v1
+      #   with:
+      #     api-key: ${{ secrets.KILO_API_KEY }}
+      #     model: "moonshotai/kimi-k2"
+      #     review-level: "detailed"
+      
+      - name: Placeholder Review
+        run: echo "Kilo Code Review action will be enabled once published"

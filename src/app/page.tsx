@@ -10,13 +10,17 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>(getTasks());
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter tasks based on search query
+  // Filter tasks based on search query (searches title and description)
   const filteredTasks = useMemo(() => {
     if (!searchQuery.trim()) return tasks;
+    const query = searchQuery.toLowerCase();
     return tasks.filter((task) =>
-      task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      task.title.toLowerCase().includes(query) ||
+      task.description.toLowerCase().includes(query)
     );
   }, [tasks, searchQuery]);
+
+  const clearSearch = () => setSearchQuery("");
 
   // Calculate task statistics
   const completedCount = tasks.filter((task) => task.status === "done").length;
@@ -79,23 +83,51 @@ export default function Home() {
 
         {/* Search/Filter Bar */}
         <div style={{ marginBottom: "20px" }}>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tasks by title..."
-            style={{
-              width: "100%",
-              padding: "12px 16px",
-              border: "2px solid #e0e0e0",
-              borderRadius: "8px",
-              fontSize: "16px",
-              boxSizing: "border-box",
-              transition: "border-color 0.2s",
-            }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "#1565C0")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
-          />
+          <div style={{ position: "relative" }}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search tasks by title or description..."
+              style={{
+                width: "100%",
+                padding: "12px 40px 12px 16px",
+                border: "2px solid #e0e0e0",
+                borderRadius: "8px",
+                fontSize: "16px",
+                boxSizing: "border-box",
+                transition: "border-color 0.2s",
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "#1565C0")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
+            />
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "#e0e0e0",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: "24px",
+                  height: "24px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "14px",
+                  color: "#666",
+                  padding: 0,
+                }}
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
           {searchQuery && (
             <p
               style={{
