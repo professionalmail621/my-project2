@@ -1,0 +1,28 @@
+# .github/workflows/kilo-scan.yml
+name: Kilo Security Scan
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Kilo Security Scan
+        uses: kilocode/kilo-scan-action@v1
+        with:
+          api-key: ${{ secrets.KILO_API_KEY }}
+          scan-type: "security"
+          severity-threshold: "medium"
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: kilo-scan-results.json
