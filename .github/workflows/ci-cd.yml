@@ -25,12 +25,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Kilo Code Quality Check
+      # Temporarily disabled - action not yet published
+      # - name: Kilo Code Quality Check
+      #   if: github.event_name == 'pull_request'
+      #   uses: kilocode/kilo-review-action@v1
+      #   with:
+      #     api-key: ${{ secrets.KILO_API_KEY }}
+      #     model: "moonshotai/kimi-k2"
+      
+      - name: Placeholder Quality Check
         if: github.event_name == 'pull_request'
-        uses: kilocode/kilo-review-action@v1
-        with:
-          api-key: ${{ secrets.KILO_API_KEY }}
-          model: "moonshotai/kimi-k2"
+        run: echo "Kilo Code Quality Check will be enabled once action is published"
 
   deploy:
     needs: build-and-test
