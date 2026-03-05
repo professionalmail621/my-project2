@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/Education/Kilocode/task-tracker"
+      ]
+    },
+    "project-stats": {
+    "command": "node",
+    "args": ["C:/Education/Kilocode/task-tracker/mcp-server/index.js"]
+    }
+  }
+}
